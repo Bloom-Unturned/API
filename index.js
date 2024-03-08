@@ -3,19 +3,18 @@ const mysql = require('mysql2/promise'); // Using promise version of mysql2
 const app = express();
 const { createCanvas, loadImage, Image } = require('canvas');
 const fs = require('fs').promises;
+require('dotenv').config()
 
-
-// MySQL database configuration
+const steamApiKey = process.env.STEAM_API_KEY;
 const dbConfig = {
-  host: '127.0.0.1',
-  user: 'root',
-  password: '',
-  database: 'test',
-      supportBigNumbers: true,
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PSWD,
+  database: process.env.MYSQL_DATABASE,
+  port: Number(process.env.MYSQL_PORT),
+  supportBigNumbers: true,
   bigNumberStrings: true,
 };
-
-// Create a connection pool
 const pool = mysql.createPool(dbConfig);
 
 app.use((req, res, next) => {
@@ -80,7 +79,7 @@ app.get('/players', async (req, res) => {
 app.get('/steam/userstatsforgame', async (req, res) => {
   try {
     const steamId = req.query.steamid;
-   fetch('https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=304930&key=49E645DFFE4B68E941B71C99FA3EAE2E&steamid=' + steamId)
+   fetch(`https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=304930&key=${steamApiKey}&steamid=` + steamId)
   .then(response => response.json())
   .then(data => res.json({ result: data }));
 
@@ -92,7 +91,7 @@ app.get('/steam/userstatsforgame', async (req, res) => {
 app.get('/steam/usersummaries', async (req, res) => {
   try {
     const steamId = req.query.steamid;
-   fetch('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=49E645DFFE4B68E941B71C99FA3EAE2E&steamids=' + steamId)
+   fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamApiKey}&steamids=` + steamId)
   .then(response => response.json())
   .then(data => res.json({ result: data }));
 
@@ -104,9 +103,9 @@ app.get('/steam/usersummaries', async (req, res) => {
 
 const canvasWidth = 958;
 const canvasHeight = 958;
-const paddingX = 20; // Adjust horizontal padding size as needed
-const paddingY = 20; // Adjust vertical padding size as needed
-const cellPadding = 10; // Padding between cells
+const paddingX = 20;
+const paddingY = 20; 
+const cellPadding = 10;
 
 app.get('/vault/grid', async (req, res) => {
   try {
@@ -216,7 +215,7 @@ app.get('/vault/content', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-const port = 2002;
+const port = Number(process.env.PORT);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
