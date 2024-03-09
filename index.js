@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2/promise'); // Using promise version of mysql2
 const app = express();
-const { createCanvas, loadImage, Image } = require('canvas');
+// const { createCanvas, loadImage, Image } = require('canvas');
 const fs = require('fs').promises;
 require('dotenv').config()
 
@@ -100,7 +100,7 @@ app.get('/steam/usersummaries', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
+/*
 const canvasWidth = 958;
 const canvasHeight = 958;
 const paddingX = 20;
@@ -215,6 +215,7 @@ app.get('/vault/content', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+*/
 const port = Number(process.env.PORT);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
