@@ -16,7 +16,7 @@ const dbConfig = {
   bigNumberStrings: true,
 };
 const pool = mysql.createPool(dbConfig);
-
+app.use(express.json())
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -34,12 +34,33 @@ app.get('/players/player', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.get('/guides/guide', async (req, res) => {
+  try {
+    const guideId = req.query.guideId;
+    const [rows, fields] = await pool.query('SELECT * FROM Website_Guides WHERE ID = ?', [guideId]);
+    res.json({ result: rows });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.get('/guides', async (req, res) => {
+  try {
+    const [rows, fields] = await pool.query('SELECT ID, AuthorID, Title, Icon, `Desc`, Category FROM Website_Guides');
+    res.json({ result: rows });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/guides/create', async (req, res) => {
   try {
-    const { Title, Desc, Icon, Category, Content } = req.body;
+    const { AuthorID, Title, Desc, Icon, Category, Content } = req.body;
+    console.log(req.body);
     await pool.query(
-      'INSERT INTO Website_Guides (Title, Desc, Icon, Category, Content) VALUES (?, ?, ?, ?, ?)',
-      [Title, Desc, Icon, Category, Content]
+      'INSERT INTO Website_Guides (AuthorID, Title, `Desc`, Icon, Category, Content) VALUES (?, ?, ?, ?, ?, ?)',
+      [AuthorID, Title, Desc, Icon, Category, Content]
     );
     res.json({ success: true, message: 'Data inserted successfully' });
   } catch (error) {
@@ -47,6 +68,7 @@ app.post('/guides/create', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 app.get('/players/isadmin', async (req, res) => {
   try {
     const steamId = req.query.steamid;
