@@ -34,6 +34,19 @@ app.get('/players/player', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.post('/guides/create', async (req, res) => {
+  try {
+    const { Title, Desc, Icon, Category, Content } = req.body;
+    await pool.query(
+      'INSERT INTO Website_Guides (Title, Desc, Icon, Category, Content) VALUES (?, ?, ?, ?, ?)',
+      [Title, Desc, Icon, Category, Content]
+    );
+    res.json({ success: true, message: 'Data inserted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 app.get('/players/isadmin', async (req, res) => {
   try {
     const steamId = req.query.steamid;
