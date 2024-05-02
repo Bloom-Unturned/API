@@ -96,7 +96,7 @@ app.post('/discord/link', async (req, res) => {
 app.get('/players/isadmin', async (req, res) => {
   try {
     const steamId = req.query.steamid;
-    res.json({ result: ["76561198359842501"].includes(steamId) ? true : false });
+    res.json({ result: ["76561198359842501", "76561198337674827"].includes(steamId) ? true : false });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
