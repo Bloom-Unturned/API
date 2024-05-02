@@ -34,6 +34,18 @@ app.get('/players/player', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/logs/player', async (req, res) => {
+  try {
+    const steamId = req.query.steamid;
+    const [rows, fields] = await pool.query('SELECT * FROM RaidLogs WHERE Owner = ?', [steamId]);
+    res.json({ result: rows });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.get('/guides/guide', async (req, res) => {
   try {
     const guideId = req.query.guideId;
@@ -57,12 +69,24 @@ app.get('/guides', async (req, res) => {
 app.post('/guides/create', async (req, res) => {
   try {
     const { AuthorID, Title, Desc, Icon, Category, Content } = req.body;
-    console.log(req.body);
     await pool.query(
       'INSERT INTO Website_Guides (AuthorID, Title, `Desc`, Icon, Category, Content) VALUES (?, ?, ?, ?, ?, ?)',
       [AuthorID, Title, Desc, Icon, Category, Content]
     );
     res.json({ success: true, message: 'Data inserted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/discord/link', async (req, res) => {
+  try {
+    const { SteamId, DiscordId } = req.body;
+    await pool.query(
+      'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?)',
+      [SteamId, DiscordId]
+    );
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -78,6 +102,17 @@ app.get('/players/isadmin', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/discord/link', async (req, res) => {
+  try {
+    const steamId = req.query.steamid;
+    res.json({ result: ["76561198359842501"].includes(steamId) ? true : false });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.get('/items/item', async (req, res) => {
   try {
     const item = req.query.item;
@@ -109,6 +144,7 @@ app.get('/items', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.get('/players', async (req, res) => {
   try {
