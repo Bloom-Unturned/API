@@ -7,6 +7,7 @@
     "fs": "^0.0.1-security",
     "mysql2": "^3.9.1",
     "passport": "^0.7.0",
-    "passport-steam": "^1.0.18"
+    "passport-steam": "^1.0.18",
+    "path": "^0.12.7"
   }
 }
