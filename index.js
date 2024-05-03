@@ -101,13 +101,14 @@ app.post('/discord/link', async (req, res) => {
 
 app.get('/discord/isLinked', async (req, res) => {
   try {
-    const DiscordId = req.query.discordid;
-    const result = await pool.query(
-      'SELECT SteamId FROM Discord WHERE DiscordId = ?',
-      [DiscordId]
+    const steamId = req.query.steamid;
+    const [rows, fields] = await pool.query(
+      'SELECT DiscordId FROM Discord WHERE Steamid = ?',
+      [steamId]
     );
-    if (result.length > 0) {
-      res.status(200).json({ linked: true, steamId: result[0].SteamId });
+    console.log(rows)
+    if (rows.length > 0) {
+      res.status(200).json({ linked: true, discordId: rows[0].DiscordId });
     } else {
       res.status(200).json({ linked: false });
     }
