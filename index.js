@@ -89,8 +89,8 @@ app.post('/discord/link', async (req, res) => {
   try {
     const { SteamId, DiscordId } = req.body;
     await pool.query(
-      'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?)',
-      [SteamId, DiscordId]
+      'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?) ON DUPLICATE KEY UPDATE DiscordId = ?',
+      [SteamId, DiscordId, DiscordId]
     );
   } catch (error) {
     console.error('Error:', error);
