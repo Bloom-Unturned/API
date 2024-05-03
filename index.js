@@ -101,7 +101,7 @@ app.post('/discord/link', async (req, res) => {
 
 app.get('/discord/isLinked', async (req, res) => {
   try {
-    const { DiscordId } = req.body;
+    const DiscordId = req.query.discordid;
     const result = await pool.query(
       'SELECT SteamId FROM Discord WHERE DiscordId = ?',
       [DiscordId]
