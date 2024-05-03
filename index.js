@@ -107,7 +107,6 @@ app.get('/discord/isLinked', async (req, res) => {
       'SELECT DiscordId FROM Discord WHERE Steamid = ?',
       [steamId]
     );
-    console.log(rows)
     if (rows.length > 0) {
       res.status(200).json({ linked: true, discordId: rows[0].DiscordId });
     } else {
