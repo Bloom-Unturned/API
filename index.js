@@ -81,6 +81,10 @@ app.post('/guides/create', async (req, res) => {
   }
 });
 
+
+
+
+
 app.post('/discord/link', async (req, res) => {
   try {
     const { SteamId, DiscordId } = req.body;
@@ -93,6 +97,30 @@ app.post('/discord/link', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+app.get('/discord/isLinked', async (req, res) => {
+  try {
+    const { DiscordId } = req.body;
+    const result = await pool.query(
+      'SELECT SteamId FROM Discord WHERE DiscordId = ?',
+      [DiscordId]
+    );
+    if (result.length > 0) {
+      res.status(200).json({ linked: true, steamId: result[0].SteamId });
+    } else {
+      res.status(200).json({ linked: false });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+
 
 app.get('/players/isadmin', async (req, res) => {
   try {
