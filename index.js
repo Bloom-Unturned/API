@@ -92,6 +92,7 @@ app.post('/discord/link', async (req, res) => {
       'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?) ON DUPLICATE KEY UPDATE DiscordId = ?',
       [SteamId, DiscordId, DiscordId]
     );
+    res.status(200)
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
