@@ -110,10 +110,10 @@ app.post('/discord/link', async (req, res) => {
   .then(response => console.log(response))
   .catch(err => console.error(err));
     }
-      await pool.query(
-        'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?)',
-        [SteamId, DiscordId]
-      );
+    await pool.query(
+      'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?) ON DUPLICATE KEY UPDATE DiscordId = ?',
+      [SteamId, DiscordId, DiscordId]
+    );
       res.status(200).json({ success: true, message: 'Data inserted successfully' });
   } catch (error) {
     console.error('Error:', error);
