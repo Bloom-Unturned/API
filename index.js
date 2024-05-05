@@ -90,11 +90,8 @@ app.post('/guides/create', async (req, res) => {
 app.post('/discord/link', async (req, res) => {
   try {
     const { SteamId, DiscordId } = req.body;
-    const existingEntry = await pool.query('SELECT * FROM Discord WHERE SteamId = ?', [SteamId]);
-    
-    if (existingEntry.length > 0) {
-      console.log('hello');
-    }else{
+    const [rows, fields] = await pool.query('SELECT * FROM Discord WHERE SteamId = ?', [SteamId]);
+    if (rows.length < 1) {
       console.log("asd");
       fetch("https://panel.bloomnetwork.online/api/client/servers/fbad7ba0/command", {
   "method": "POST",
