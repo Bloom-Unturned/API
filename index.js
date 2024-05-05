@@ -25,6 +25,8 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
 app.get('/players/player', async (req, res) => {
   try {
     const steamId = req.query.steamid;
@@ -88,17 +90,37 @@ app.post('/guides/create', async (req, res) => {
 app.post('/discord/link', async (req, res) => {
   try {
     const { SteamId, DiscordId } = req.body;
-    const result = await pool.query(
-      'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?) ON DUPLICATE KEY UPDATE DiscordId = ?',
-      [SteamId, DiscordId, DiscordId]
-    );
-      console.log(result.affectedRows);
-    res.status(200).json({ success: true, message: 'Data inserted successfully' });
+    const existingEntry = await pool.query('SELECT * FROM Discord WHERE SteamId = ?', [SteamId]);
+    
+    if (existingEntry.length > 0) {
+      console.log('hello');
+    }else{
+      console.log("asd");
+      fetch("https://panel.bloomnetwork.online/api/client/servers/fbad7ba0/command", {
+  "method": "POST",
+  "headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${process.env.PTLC_KEY}`,
+  },
+  "body": JSON.stringify({
+    "command": `flag2 ${SteamId} h 2`
+  })
+})
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+    }
+      await pool.query(
+        'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?)',
+        [SteamId, DiscordId]
+      );
+      res.status(200).json({ success: true, message: 'Data inserted successfully' });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 
