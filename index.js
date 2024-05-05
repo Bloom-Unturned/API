@@ -88,16 +88,18 @@ app.post('/guides/create', async (req, res) => {
 app.post('/discord/link', async (req, res) => {
   try {
     const { SteamId, DiscordId } = req.body;
-    await pool.query(
+    const result = await pool.query(
       'INSERT INTO Discord (SteamId, DiscordId) VALUES (?, ?) ON DUPLICATE KEY UPDATE DiscordId = ?',
       [SteamId, DiscordId, DiscordId]
     );
+      console.log(result.affectedRows);
     res.status(200).json({ success: true, message: 'Data inserted successfully' });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 app.get('/discord/isLinked', async (req, res) => {
