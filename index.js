@@ -92,7 +92,6 @@ app.post('/discord/link', async (req, res) => {
     const { SteamId, DiscordId } = req.body;
     const [rows, fields] = await pool.query('SELECT * FROM Discord WHERE SteamId = ?', [SteamId]);
     if (rows.length < 1) {
-      console.log("asd");
       fetch("https://panel.bloomnetwork.online/api/client/servers/fbad7ba0/command", {
   "method": "POST",
   "headers": {
@@ -101,10 +100,9 @@ app.post('/discord/link', async (req, res) => {
     "Authorization": `Bearer ${process.env.PTLC_KEY}`,
   },
   "body": JSON.stringify({
-    "command": `flag2 ${SteamId} h 2`
+    "command": `flag2 ${SteamId} h 10`
   })
 })
-  .then(response => console.log(response))
   .catch(err => console.error(err));
     }
     await pool.query(
