@@ -141,6 +141,40 @@ app.get('/discord/isLinked', async (req, res) => {
 
 
 
+app.post('/skins/set', async (req, res) => {
+  try {
+    const { SteamID, Hat, Mask, Glasses, Shirt, Vest, Backpack, Pants } = req.body;
+    await pool.query(
+      'INSERT INTO Skins (SteamID, Hat, Mask, Glasses, Shirt, Vest, Backpack, Pants) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE Hat = VALUES(Hat), Mask = VALUES(Mask), Glasses = VALUES(Glasses), Shirt = VALUES(Shirt), Vest = VALUES(Vest), Backpack = VALUES(Backpack), Pants = VALUES(Pants)',
+      [SteamID, Hat, Mask, Glasses, Shirt, Vest, Backpack, Pants]
+    );
+    res.status(200).json({ success: true, message: 'Data inserted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/skins/get', async (req, res) => {
+  try {
+    const steamId = req.query.steamid;
+    const [rows, fields] = await pool.query(
+      'SELECT * FROM Skins WHERE SteamID = ?',
+      [steamId]
+    );
+    if (rows.length > 0) {
+      const { Hat, Mask, Glasses, Shirt, Vest, Backpack, Pants } = rows[0];
+      res.status(200).json({Hat, Mask, Glasses, Shirt, Vest, Backpack, Pants });
+    }else{
+      res.status(200).json({Hat: 0, Mask: 0, Glasses: 0, Shirt: 0, Vest: 0, Backpack: 0, Pants: 0 });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 
 app.get('/players/isadmin', async (req, res) => {
   try {
